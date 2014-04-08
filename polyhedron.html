@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja-JP">
+	<head>
+		<title>正多面体</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="js/canvas3d.js"></script>
+        <div style="position: absolute; top: 10px; width: 100%; text-align: center; ">
+			<a href="#" id="tetra">正四面体</a>|<a href="#" id="hexa">正六面体</a>|<a href="#" id="octa">正八面体</a>|<a href="#" id="dodeca">正十二面体</a>|<a href="#" id="icosa">正二十面体</a>
+		</div>
+		<script>			
+			var scene,
+                camera,
+                renderer,
+                ctrl,
+                v,
+                i,
+                g,
+                x,
+                y;
+			init();
+			function init() {
+				renderer = new C3D.Renderer();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				document.body.appendChild(renderer.canvas);
+				
+				//geometry
+                g = new C3D.GeometryIcosahedron(10, new C3D.Vector3(0, 0, 0));
+                for (i = 0; i < 20; i = i + 1){
+                    (function () {
+                        g.faces[i].color = '#'+('00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6);
+                    })()
+                }
+				//scene
+				scene = new C3D.Scene();
+                scene.add(g);
+				//camera
+				camera = new C3D.Camera(2, window.innerWidth / window.innerHeight);
+				camera.setPosition(new C3D.Vector3(500, 0, 0));
+				camera.setLookAt(new C3D.Vector3(0, 0, 0));
+				camera.setUpperPoint(new C3D.Vector3(0, 0, 100));
+				//イベントリスナー　リサイズ
+				window.addEventListener('resize', onWindowResize, false);
+                //イベントリスナー　ロード
+                window.addEventListener('load', onWindowLoad, false);
+                //スイッチ
+                window.document.getElementById("tetra").addEventListener('click', setTetrahedron, false);
+                window.document.getElementById("hexa").addEventListener('click', setHexahedron, false);
+                window.document.getElementById("octa").addEventListener('click', setOctahedron, false);
+                window.document.getElementById("dodeca").addEventListener('click', setDodecahedron, false);
+                window.document.getElementById("icosa").addEventListener('click', setIcosahedron, false);
+                //スクロール固定
+                document.addEventListener('touchmove', function(ev) {ev.preventDefault();}, false);
+			}
+            //正四面体
+			function setTetrahedron(e) {
+                scene.remove(g);
+                g = new C3D.GeometryTetrahedron(10, new C3D.Vector3(0, 0, 0));
+                for (i = 0; i < 4; i = i + 1){
+                    (function () {
+                        g.faces[i].color = '#'+('00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6);
+                    })()
+                }
+                scene.add(g);
+                addControl(e);
+			}
+            //正六面体
+			function setHexahedron(e) {
+                scene.remove(g);
+                g = new C3D.GeometryHexahedron(10, new C3D.Vector3(0, 0, 0));
+                for (i = 0; i < 6; i = i + 1){
+                    (function () {
+                        g.faces[i].color = '#'+('00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6);
+                    })()
+                }
+                scene.add(g);
+                addControl(e);
+			}
+            //正八面体
+			function setOctahedron(e) {
+                scene.remove(g);
+                g = new C3D.GeometryOctahedron(10, new C3D.Vector3(0, 0, 0));
+                for (i = 0; i < 8; i = i + 1){
+                    (function () {
+                        g.faces[i].color = '#'+('00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6);
+                    })()
+                }
+                scene.add(g);
+                addControl(e);
+			}
+            //正十二面体
+			function setDodecahedron(e) {
+                scene.remove(g);
+                g = new C3D.GeometryDodecahedron(10, new C3D.Vector3(0, 0, 0));
+                for (i = 0; i < 12; i = i + 1){
+                    (function () {
+                        g.faces[i].color = '#'+('00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6);
+                    })()
+                }
+                scene.add(g);
+                addControl(e);
+			}
+            //正二十面体
+			function setIcosahedron(e) {
+                scene.remove(g);
+                g = new C3D.GeometryIcosahedron(10, new C3D.Vector3(0, 0, 0));
+                for (i = 0; i < 20; i = i + 1){
+                    (function () {
+                        g.faces[i].color = '#'+('00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6);
+                    })()
+                }
+                scene.add(g);
+                addControl(e);
+			}
+			function onWindowResize(e) {
+				camera.setAspect(window.innerWidth / window.innerHeight);
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				render();
+			}
+            function onWindowLoad(e) {
+                addControl(e);
+                animate();
+            }
+            function addControl(e) {
+                ctrl = new C3D.Control(g, camera);
+                ctrl.mousePos.x = e.clientX;
+                ctrl.mousePos.y = e.clientY;
+            }
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+			function render() {
+                ctrl.update();
+				renderer.render(scene, camera);
+			}
+		</script>
+	</body>
+</html>
